@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=1200">
 <title>Parda Nashee | Abaya & Modest Wear</title>
 <style>
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+.modal-box { background: #191715; border: 1px solid var(--line); width: 750px; max-width: 90%; padding: 30px; display: flex; gap: 30px; position: relative; color: var(--cream); }
+.modal-close { position: absolute; top: 15px; right: 20px; font-size: 22px; cursor: pointer; color: var(--gold); }
+.modal-left { width: 50%; }
+.modal-main-img { width: 100%; height: 320px; object-fit: cover; border: 1px solid var(--line); }
+.modal-thumbs { display: flex; gap: 10px; margin-top: 10px; }
+.modal-thumbs img { width: 60px; height: 60px; object-fit: cover; cursor: pointer; border: 1px solid var(--line); opacity: 0.6; }
+.modal-thumbs img.active { opacity: 1; border-color: var(--gold); }
+.modal-right { width: 50%; display: flex; flex-direction: column; justify-content: space-between; }
+.modal-right h2 { font-size: 24px; font-weight: normal; margin: 0 0 10px; }
+.modal-right .price { font-size: 18px; color: var(--gold); margin-bottom: 15px; }
+.color-options { display: flex; gap: 10px; margin-bottom: 20px; }
+.color-circle { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+.color-circle.selected { border-color: var(--gold); }
 :root{--bg:#11100f;--panel:#191715;--cream:#eee3cf;--gold:#c8a96b;--muted:#a79f92;--line:#302c26}
 *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--cream);font-family:Georgia,"Times New Roman",serif;min-width:1100px}
 a{text-decoration:none;color:inherit}.top{height:38px;background:#0b0b0a;border-bottom:1px solid #24211d;text-align:center;font:12px Arial;letter-spacing:2px;color:#b9b09f;padding:12px}
@@ -54,9 +68,11 @@ footer{border-top:1px solid var(--line);padding:42px 85px;display:flex;justify-c
 <section class="section" id="new">
   <div class="sectionHead"><h2>Featured Collection</h2><span>NEW SEASON</span></div>
   <div class="products">
-    <div class="card">
-<div class="pic"style="padding:0; overflow:hidden;">
-    <img src="images/caps.jpg" alt="HIJAB CAPS" style="width:100%; height:100%; object-fit:cover;"></div><div class="info"><h3>HIJAB CAPS WITH MULTIPULE COLOURS</h3><div class="price">₹349</div></div><div class="order" onclick="order('HIJAB CAPS WITH MULTIPULE COLOURS','349')">ORDER ON WHATSAPP</div></div>
+    <div class="card"> oneclicl="openmodal('HIJAB CAPS WITH MULTIPULE COLOUR', '349', [images/caps.jpg'], ['#111', '#333'])">
+      <div class="pic"style="padding:0; overflow:hidden;">
+    <img src="images/caps.jpg" alt="HIJAB CAPS" style="width:100%; height:100%; object-fit:cover;"></div>
+      <div class="info"><h3>HIJAB CAPS WITH MULTIPULE COLOURS</h3><div class="price">₹349</div></div>
+      <div class="order"> VIEW DETAILS</div></div>
     <div class="card"><div class="pic"style="padding:0; overflow:hidden;">
     <img src="images/purple.jpg" alt="STYLISH BURQA" style="width:100%; height:100%; object-fit:cover;"></div><div class="info"><h3>Premium TikTok Fabric Fancy Full Umbrella Diamond Work Front Open Abaya with Black Dupatta </h3><div class="price">₹1,549</div></div><div class="order" onclick="order('Premium TikTok Fabric Fancy Full Umbrella Diamond Work Front Open Abaya with Black Dupatta','1549')">ORDER ON WHATSAPP</div></div>
     <div class="card"><div class="pic"style="padding:0; overflow:hidden;">
@@ -79,10 +95,68 @@ footer{border-top:1px solid var(--line);padding:42px 85px;display:flex;justify-c
     WhatsApp: <b style="color:#eee">+91 8625835059</b><br>
       </div>
 </section>
-
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box">
+    <div class="modal-close" onclick="closeModal()">&times;</div>
+    <div class="modal-left">
+      <img id="modalImg" class="modal-main-img" src="" alt="Product">
+      <div class="modal-thumbs" id="modalThumbs"></div>
+    </div>
+    <div class="modal-right">
+      <div>
+        <h2 id="modalTitle">Product Name</h2>
+        <div class="price" id="modalPrice">₹000</div>
+        <div style="font: 12px Arial; color: var(--muted); margin-bottom: 8px;">SELECT COLOR:</div>
+        <div class="color-options" id="modalColors"></div>
+      </div>
+      <div class="order" id="modalOrderBtn" style="margin: 0; text-align: center;">ORDER ON WHATSAPP</div>
+    </div>
+  </div>
+</div>
 <footer><strong>PARDA NASHEE</strong><span>© 2026 Parda Nashee. All rights reserved.</span></footer>
 <div id="notice">Opening WhatsApp…</div>
 <script>
+  function openModal(name, price, images, colors) {
+  document.getElementById('modalTitle').innerText = name;
+  document.getElementById('modalPrice').innerText = '₹' + price;
+  document.getElementById('modalImg').src = images[0];
+  let thumbsHTML = '';
+  images.forEach((img, index) => {
+    let activeClass = index === 0 ? 'active' : '';
+    thumbsHTML += `<img src="${img}" class="${activeClass}" onclick="changeMainImage('${img}', this)">`;
+  });
+  document.getElementById('modalThumbs').innerHTML = thumbsHTML;
+  let colorsHTML = '';
+  colors.forEach((col, index) => {
+    let selClass = index === 0 ? 'selected' : '';
+    colorsHTML += `<div class="color-circle ${selClass}" style="background-color: ${col};" onclick="selectColor(this)"></div>`;
+  });
+  document.getElementById('modalColors').innerHTML = colorsHTML;
+  document.getElementById('modalOrderBtn').onclick = function() {
+    const phone = "918625835059
+    const msg = `Assalamualaikum, Parda Nashee! I want to order: ${name} (₹${price}). Please share details.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
+  document.getElementById('productModal').style.display = 'flex';
+}
+function changeMainImage(src, element) {
+  document.getElementById('modalImg').src = src;
+  let thumbs = document.querySelectorAll('.modal-thumbs img');
+  thumbs.forEach(t => t.classList.remove('active'));
+  element.classList.add('active');
+}
+function selectColor(element) {
+  let circles = document.querySelectorAll('.color-circle');
+  circles.forEach(c => c.classList.remove('selected'));
+  element.classList.add('selected');
+}
+function closeModal() {
+  document.getElementById('productModal').style.display = 'none';
+}
+window.onclick = function(event) {
+  let modal = document.getElementById('productModal');
+  if (event.target == modal) { modal.style.display = 'none'; }
+}
 function order(name,price){
   const phone="918625835059"; // Replace with your WhatsApp number
   const msg=`Assalamualaikum, Parda Nashee! I want to order: ${name} (₹${price}). Please share available sizes/colors and delivery details.`;
